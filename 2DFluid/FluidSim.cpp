@@ -21,7 +21,7 @@ void FluidSim::input() {
 	window->processInput(window->getPointer());
 	if (clickD) {
 		//add 
-		fluid->addQuantity(512, 512, 100);
+		fluid->addQuantity(200, 200, 100);
 
 		clickD = false;
 	}
@@ -32,7 +32,8 @@ void FluidSim::input() {
 void FluidSim::update() {
 	fluid->advect();
 }
-void FluidSim::render() {
+void FluidSim::render(int n) {
+//	if (n < 2) {
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -63,8 +64,8 @@ void FluidSim::render() {
 		//}
 		//glEnd();
 		glBegin(GL_POINTS);
-		for (int x = 1; x < N-1; x++) {
-			for (int y = 1; y < N-1; y++) {
+		for (int x = 1; x < N - 1; x++) {
+			for (int y = 1; y < N - 1; y++) {
 				float d = fluid->density[index(x, y)];
 				if (d > 1000) {
 					glVertex2f(x, y);
@@ -73,18 +74,19 @@ void FluidSim::render() {
 			}
 		}
 		glEnd();
+	//}
 	
 }
 void FluidSim::run() {
 	fluid->addQuantity(256, 256, 100);
-
+	int n = 1;
 	while (!glfwWindowShouldClose(window->getPointer())) {
 		input();
 
 		update();
 	
-		render();
-
+		render(n);
+		n++;
 		glfwSwapBuffers(window->getPointer());
 		glfwPollEvents();
 

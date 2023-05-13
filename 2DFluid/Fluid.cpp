@@ -19,6 +19,7 @@ Fluid::Fluid(float dt, float diffusion, float viscosity) {
 		for (int y = 0; y < N; y++) {
 			if (x == 0 || y == 0 || x == N - 1 || y == N - 1) {
 				density[index(x, y)] = 0;
+				density0[index(x, y)] = 0;
 		
 			}
 			density[index(x,y)] = 1000;
@@ -28,19 +29,19 @@ Fluid::Fluid(float dt, float diffusion, float viscosity) {
 	//solenoidal velocity field
 	for (int x = 0; x < N+1; x++) {
 		for (int y = 0; y < N+1; y++) {
-			if (x == 0 || y == 0 || x == N  || y == N ) {
+			if (x == 0 || y == 0 || x == (N+1)-1  || y == (N+1)-1 ) {
 				//boundary walls 
 				Vx[index(x,y)] = 0;
 				Vy[index(x,y)] = 0;
 			}
-			Vx[index(x,y)] = 5; Vx0[index(x,y)] = 0;
-			Vy[index(x, y)] = -5; Vy0[index(x, y)] = 0;
+			Vx[index(x,y)] = -5; Vx0[index(x,y)] = 0;
+			Vy[index(x, y)] = 5; Vy0[index(x, y)] = 0;
 		}
 	}
 
 }
 void Fluid::addQuantity(int x, int y, float dens) {
-	density[index(x, y)] += dens;
+	density0[index(x, y)] += dens;
 }
 
 //Solve material derivative Dq/dt=0
@@ -51,23 +52,34 @@ void Fluid::advect() {
 	for (int x = 1; x < N-1; x++) {
 		for (int y = 1; y < N-1; y++) {
 			Vec2f position{ static_cast<float>(x),static_cast<float>(y) };
+
 			//euler to find prevPos
 			float prevPosX = position.x - Vx[index(x, y)] * dt;
 			float prevPosY = position.y - Vy[index(x, y)] * dt;
 			if (prevPosX < 1)prevPosX = 1;
 			if (prevPosY < 1) prevPosY = 1;
-			if (prevPosX > 511)prevPosX = 511;
-			if (prevPosY >511) prevPosY = 511;
-			Vec2f prevPos{ prevPosX,prevPosY };
+			if (prevPosX > 510)prevPosX = 510;
+			if (prevPosY >510) prevPosY = 510;
+			Vec2f prevPos(prevPosX,prevPosY );
+			Vec2f distance = (position - prevPos).normalize();
+	
 
-			//bilinear inerpolation
+
+			//bilinear interpolation
 			//                   0,0        1,0     1,1      0,1 
 			//f(x,y) = (1-x)(1-y)f1 + x(1-y)f2 + xyf3 + (1-x)yf4
-
-			density[index(x, y)] = (1.0f-prevPos.x)*(1.0f-prevPos.y)*density[index(prevPos.x, prevPos.y)] + prevPos.x*(1.0f-prevPos.y)*density[index(prevPos.x+1, prevPos.y)] +
-									prevPos.x*prevPos.y*density[index(prevPos.x+1, prevPos.y+1)] + (1.0f-prevPos.x)*prevPos.y*density[index(prevPos.x, prevPos.y+1)];
+		
+			density[index(x, y)] = ((1.0f- distance.x)*(1.0f- distance.y)*density0[index(prevPos.x, prevPos.y)]) +
+				(distance.x*(1.0f- distance.y)*density0[index(prevPos.x+1, prevPos.y)]) +
+				(distance.x* distance.y*density0[index(prevPos.x+1, prevPos.y+1)]) +
+				((1.0f- distance.x)* distance.y*density0[index(prevPos.x, prevPos.y+1)]);
+			if (x == 510 && y>500) {
+				std::cout << density[index(x, y)] << '\n';
+			}
 		}
 	}
+	//swap
+	density0 = density;
 
 }
 

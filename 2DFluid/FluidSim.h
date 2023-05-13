@@ -14,10 +14,10 @@ public:
 	void run();
 	void input();
 	void update();
-	void render();
+	void render(int n);
 	Vec2f cartesiantoScreen(const Vec2f& v);
 
-	float dt = 0.00000000016f;
+	float dt = 0.016f;
 
 	Fluid* fluid;
 private:
