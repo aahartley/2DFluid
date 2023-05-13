@@ -78,7 +78,7 @@ void FluidSim::render(int n) {
 	
 }
 void FluidSim::run() {
-	//fluid->addQuantity(256, 256, 100);
+	fluid->addQuantity(256, 256, 100);
 	int n = 1;
 	while (!glfwWindowShouldClose(window->getPointer())) {
 		input();

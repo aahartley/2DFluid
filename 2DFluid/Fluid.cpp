@@ -34,8 +34,8 @@ Fluid::Fluid(float dt, float diffusion, float viscosity) {
 				Vx[index(x,y)] = 0;
 				Vy[index(x,y)] = 0;
 			}
-			Vx[index(x,y)] = 0; Vx0[index(x,y)] = 0;
-			Vy[index(x, y)] = 0; Vy0[index(x, y)] = 0;
+			Vx[index(x,y)] = -5; Vx0[index(x,y)] = 0;
+			Vy[index(x, y)] = 5; Vy0[index(x, y)] = 0;
 		}
 	}
 
@@ -61,11 +61,11 @@ void Fluid::advect() {
 			float prevPosY = position.y - Vy[index(x, y)] * dt;
 			if (prevPosX < 1)prevPosX = 1;
 			if (prevPosY < 1) prevPosY = 1;
-			if (prevPosX > 510)prevPosX = 510;
-			if (prevPosY >510) prevPosY = 510;
+			if (prevPosX > 511)prevPosX = 510;
+			if (prevPosY >511) prevPosY = 510;
 			Vec2f prevPos(prevPosX,prevPosY );
 
-			//indexes of the 4 densities to interpolate prevPos
+			//indexes of the 4 densities to interpolate with to find density of prevPos
 			//converting to int to give  me top left point
 			Vec2f position1{ static_cast<float>(static_cast<int>(prevPos.x)),static_cast<float>(static_cast<int>(prevPos.y)) };
 			Vec2f position2{ static_cast<float>(position1.x + 1),static_cast<float>(position1.y) };
@@ -75,7 +75,6 @@ void Fluid::advect() {
 			Vec2f distance2 = (position2 - prevPos).normalize();
 			Vec2f distance3 = (position3 - prevPos).normalize();
 			Vec2f distance4 = (position4 - prevPos).normalize();
-
 
 
 			//bilinear interpolation to find old density
