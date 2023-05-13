@@ -17,7 +17,7 @@ public:
 	void render(int n);
 	Vec2f cartesiantoScreen(const Vec2f& v);
 
-	float dt = 0.016f;
+	float dt = 0.00000000000000016f;
 
 	Fluid* fluid;
 private:

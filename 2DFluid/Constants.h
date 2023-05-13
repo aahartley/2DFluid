@@ -21,6 +21,6 @@ extern bool clickV;
 inline int index(int x, int y) {
 	int index = (static_cast<int>(y * N) + x);
 	//if (index < 0)index = 0;
-	//if (index > 511)index = 511;
+	//if (index > 510)index = 510;
 	return index;
 }

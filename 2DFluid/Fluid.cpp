@@ -34,8 +34,8 @@ Fluid::Fluid(float dt, float diffusion, float viscosity) {
 				Vx[index(x,y)] = 0;
 				Vy[index(x,y)] = 0;
 			}
-			Vx[index(x,y)] = -5; Vx0[index(x,y)] = 0;
-			Vy[index(x, y)] = 5; Vy0[index(x, y)] = 0;
+			Vx[index(x,y)] = 0; Vx0[index(x,y)] = 0;
+			Vy[index(x, y)] = 0; Vy0[index(x, y)] = 0;
 		}
 	}
 
@@ -51,7 +51,10 @@ void Fluid::advect() {
 	//ignore boundary walls
 	for (int x = 1; x < N-1; x++) {
 		for (int y = 1; y < N-1; y++) {
+			//position we want to find new density for
 			Vec2f position{ static_cast<float>(x),static_cast<float>(y) };
+	
+
 
 			//euler to find prevPos
 			float prevPosX = position.x - Vx[index(x, y)] * dt;
@@ -61,25 +64,36 @@ void Fluid::advect() {
 			if (prevPosX > 510)prevPosX = 510;
 			if (prevPosY >510) prevPosY = 510;
 			Vec2f prevPos(prevPosX,prevPosY );
-			Vec2f distance = (position - prevPos).normalize();
-	
+
+			//indexes of the 4 densities to interpolate prevPos
+			//converting to int to give  me top left point
+			Vec2f position1{ static_cast<float>(static_cast<int>(prevPos.x)),static_cast<float>(static_cast<int>(prevPos.y)) };
+			Vec2f position2{ static_cast<float>(position1.x + 1),static_cast<float>(position1.y) };
+			Vec2f position3{ static_cast<float>(position1.x + 1),static_cast<float>(position1.y + 1) };
+			Vec2f position4{ static_cast<float>(position1.x),static_cast<float>(position1.y + 1) };
+			Vec2f distance1 = (position1 - prevPos).normalize();
+			Vec2f distance2 = (position2 - prevPos).normalize();
+			Vec2f distance3 = (position3 - prevPos).normalize();
+			Vec2f distance4 = (position4 - prevPos).normalize();
 
 
-			//bilinear interpolation
+
+			//bilinear interpolation to find old density
 			//                   0,0        1,0     1,1      0,1 
 			//f(x,y) = (1-x)(1-y)f1 + x(1-y)f2 + xyf3 + (1-x)yf4
 		
-			density[index(x, y)] = ((1.0f- distance.x)*(1.0f- distance.y)*density0[index(prevPos.x, prevPos.y)]) +
-				(distance.x*(1.0f- distance.y)*density0[index(prevPos.x+1, prevPos.y)]) +
-				(distance.x* distance.y*density0[index(prevPos.x+1, prevPos.y+1)]) +
-				((1.0f- distance.x)* distance.y*density0[index(prevPos.x, prevPos.y+1)]);
-			if (x == 510 && y>500) {
-				std::cout << density[index(x, y)] << '\n';
+			density[index(x, y)] = ((1.0f- distance1.x)*(1.0f- distance1.y)*density0[index(position1.x, position1.y)]) +
+				(distance2.x*(1.0f- distance2.y)*density0[index(position2.x, position2.y)]) +
+				(distance3.x* distance3.y*density0[index(position3.x, position3.y)]) +
+				((1.0f- distance4.x)* distance4.y*density0[index(position4.x, position4.y)]);
+			if (x == 255 && y>254) {
+				//std::cout << density[index(x, y)] << '\n';
 			}
 		}
 	}
 	//swap
 	density0 = density;
+
 
 }
 
