@@ -34,8 +34,8 @@ Fluid::Fluid(float dt, float diffusion, float viscosity) {
 				Vx[index(x,y)] = 0;
 				Vy[index(x,y)] = 0;
 			}
-			Vx[index(x,y)] = -5; Vx0[index(x,y)] = 0;
-			Vy[index(x, y)] = 5; Vy0[index(x, y)] = 0;
+			Vx[index(x,y)] = -15; Vx0[index(x,y)] = 0;
+			Vy[index(x, y)] = 20; Vy0[index(x, y)] = 0;
 		}
 	}
 
@@ -74,7 +74,7 @@ void Fluid::advect() {
 		
 			//convert prevPos between 0-1
 
-			Vec2f prevPosN = prevPos.normal();
+			//Vec2f prevPosN = prevPos.normal();
 
 
 			float xxx = (position1.x + 1) - position1.x;
@@ -83,8 +83,8 @@ void Fluid::advect() {
 			float yy = (prevPos.y - position1.y) / yyy;
 
 			Vec2f distance(xx, yy);
-			//std::cout << 1-prevPosN.x + 1-prevPosN.y << '\n';
-
+			//std::cout << xx + yy << '\n';
+			//std::cout << prevPosN.x << '\n';
 
 			//bilinear interpolation to find old density
 			//                   0,0        1,0     1,1      0,1 
@@ -92,10 +92,12 @@ void Fluid::advect() {
 				density[index(x, y)] = ((1.0f - distance.x) * (1.0f - distance.y) * density0[index(position4.x, position4.y)]) +
 					(distance.x * (1.0f - distance.y) * density0[index(position3.x, position3.y)]) +
 					(distance.x * distance.y * density0[index(position2.x, position2.y)]) +
-					((1.0f - distance.x) * distance.y * density0[index(position4.x, position4.y)]);
-				if (x < 255 && y < 255) {
-					//std::cout << density[index(x, y)] << '\n';
-				}
+					((1.0f - distance.x) * distance.y * density0[index(position1.x, position1.y)]);
+	/*			density[index(x, y)] = ((1.0f - prevPosN.x) * (1.0f - prevPosN.y) * density0[index(position4.x, position4.y)]) +
+					(prevPosN.x * (1.0f - prevPosN.y) * density0[index(position3.x, position3.y)]) +
+					(prevPosN.x * prevPosN.y * density0[index(position2.x, position2.y)]) +
+					((1.0f - prevPosN.x) * prevPosN.y * density0[index(position1.x, position1.y)]);*/
+			
 			//}
 		}
 	}

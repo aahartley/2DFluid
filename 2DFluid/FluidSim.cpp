@@ -21,7 +21,7 @@ void FluidSim::input() {
 	window->processInput(window->getPointer());
 	if (clickD) {
 		//add 
-		fluid->addQuantity(200, 200, 100);
+		fluid->addQuantity(200, 200, 1000);
 
 		clickD = false;
 	}
@@ -67,7 +67,7 @@ void FluidSim::render(int n) {
 		for (int x = 1; x < N - 1; x++) {
 			for (int y = 1; y < N - 1; y++) {
 				float d = fluid->density[index(x, y)];
-				if (d > 1000) {
+				if (d > 1001) {
 					glVertex2f(x, y);
 
 				}
@@ -78,7 +78,7 @@ void FluidSim::render(int n) {
 	
 }
 void FluidSim::run() {
-	//fluid->addQuantity(256, 256, 1000);
+	fluid->addQuantity(255, 255, 1000);
 	int n = 1;
 	while (!glfwWindowShouldClose(window->getPointer())) {
 		input();

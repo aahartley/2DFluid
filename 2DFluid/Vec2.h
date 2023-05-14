@@ -28,12 +28,16 @@ public:
 		return *this;
 	}
 	Vec2<T> normal() {
+		Vec2<T> unitV;
 		T len = magnitude();
+		T xx = x;
+		T yy = y;
 		if (len > 0) {
 			T invL = 1 / len;
-			x *= invL, y *= invL;
+		
+			xx *= invL, yy *= invL;
 		}
-		return Vec2<T>(x, y);
+		return Vec2<T>(xx, yy);
 	}
 
 	Vec2<T> operator+(const Vec2<T>& v) {
