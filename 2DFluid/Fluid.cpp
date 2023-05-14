@@ -75,16 +75,24 @@ void Fluid::advect() {
 			//convert prevPos between 0-1
 
 			Vec2f prevPosN = prevPos.normal();
+
+
+			float xxx = (position1.x + 1) - position1.x;
+			float xx = (prevPos.x - position1.x) / xxx;
+			float yyy = (position1.y + 1) - position1.y;
+			float yy = (prevPos.y - position1.y) / yyy;
+
+			Vec2f distance(xx, yy);
 			//std::cout << 1-prevPosN.x + 1-prevPosN.y << '\n';
 
 
 			//bilinear interpolation to find old density
 			//                   0,0        1,0     1,1      0,1 
 			//f(x,y) = (1-x)(1-y)f1 + x(1-y)f2 + xyf3 + (1-x)yf4
-				density[index(x, y)] = ((1.0f - prevPosN.x) * (1.0f - prevPosN.y) * density0[index(position4.x, position4.y)]) +
-					(prevPosN.x * (1.0f - prevPosN.y) * density0[index(position3.x, position3.y)]) +
-					(prevPosN.x * prevPosN.y * density0[index(position2.x, position2.y)]) +
-					((1.0f - prevPosN.x) * prevPosN.y * density0[index(position4.x, position4.y)]);
+				density[index(x, y)] = ((1.0f - distance.x) * (1.0f - distance.y) * density0[index(position4.x, position4.y)]) +
+					(distance.x * (1.0f - distance.y) * density0[index(position3.x, position3.y)]) +
+					(distance.x * distance.y * density0[index(position2.x, position2.y)]) +
+					((1.0f - distance.x) * distance.y * density0[index(position4.x, position4.y)]);
 				if (x < 255 && y < 255) {
 					//std::cout << density[index(x, y)] << '\n';
 				}
