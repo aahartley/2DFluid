@@ -14,7 +14,6 @@ public:
 	void integrateBodyForces();
 	void project();
 	void addQuantity(int x, int y, float density);
-	void bilerp();
 
 	//MAC Staggered grid
 	float* density0;

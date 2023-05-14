@@ -61,33 +61,34 @@ void Fluid::advect() {
 			float prevPosY = position.y - Vy[index(x, y)] * dt;
 			if (prevPosX < 1)prevPosX = 1;
 			if (prevPosY < 1) prevPosY = 1;
-			if (prevPosX > 511)prevPosX = 510;
-			if (prevPosY >511) prevPosY = 510;
+			if (prevPosX > 510)prevPosX = 510;
+			if (prevPosY >510) prevPosY = 510;
 			Vec2f prevPos(prevPosX,prevPosY );
-
+			//std::cout << x << ' ' << prevPos.x << '\n';
 			//indexes of the 4 densities to interpolate with to find density of prevPos
 			//converting to int to give  me top left point
 			Vec2f position1{ static_cast<float>(static_cast<int>(prevPos.x)),static_cast<float>(static_cast<int>(prevPos.y)) };
 			Vec2f position2{ static_cast<float>(position1.x + 1),static_cast<float>(position1.y) };
 			Vec2f position3{ static_cast<float>(position1.x + 1),static_cast<float>(position1.y + 1) };
 			Vec2f position4{ static_cast<float>(position1.x),static_cast<float>(position1.y + 1) };
-			Vec2f distance1 = (position1 - prevPos).normalize();
-			Vec2f distance2 = (position2 - prevPos).normalize();
-			Vec2f distance3 = (position3 - prevPos).normalize();
-			Vec2f distance4 = (position4 - prevPos).normalize();
+		
+			//convert prevPos between 0-1
+
+			Vec2f prevPosN = prevPos.normal();
+			//std::cout << 1-prevPosN.x + 1-prevPosN.y << '\n';
 
 
 			//bilinear interpolation to find old density
 			//                   0,0        1,0     1,1      0,1 
 			//f(x,y) = (1-x)(1-y)f1 + x(1-y)f2 + xyf3 + (1-x)yf4
-		
-			density[index(x, y)] = ((1.0f- distance1.x)*(1.0f- distance1.y)*density0[index(position1.x, position1.y)]) +
-				(distance2.x*(1.0f- distance2.y)*density0[index(position2.x, position2.y)]) +
-				(distance3.x* distance3.y*density0[index(position3.x, position3.y)]) +
-				((1.0f- distance4.x)* distance4.y*density0[index(position4.x, position4.y)]);
-			if (x == 255 && y>254) {
-				//std::cout << density[index(x, y)] << '\n';
-			}
+				density[index(x, y)] = ((1.0f - prevPosN.x) * (1.0f - prevPosN.y) * density0[index(position4.x, position4.y)]) +
+					(prevPosN.x * (1.0f - prevPosN.y) * density0[index(position3.x, position3.y)]) +
+					(prevPosN.x * prevPosN.y * density0[index(position2.x, position2.y)]) +
+					((1.0f - prevPosN.x) * prevPosN.y * density0[index(position4.x, position4.y)]);
+				if (x < 255 && y < 255) {
+					//std::cout << density[index(x, y)] << '\n';
+				}
+			//}
 		}
 	}
 	//swap

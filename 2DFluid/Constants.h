@@ -3,6 +3,7 @@
 #include <iostream>
 
 const int N = 512;
+const int h = 1;
 extern Vec2f gravity;
 
 extern int WINDOW_SIZE_X ;
