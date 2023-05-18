@@ -4,6 +4,7 @@
 
 const int N = 512;
 const int h = 1;
+const float PI = 3.141592653589793238f;
 extern Vec2f gravity;
 
 extern int WINDOW_SIZE_X ;

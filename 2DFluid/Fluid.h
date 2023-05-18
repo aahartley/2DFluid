@@ -1,6 +1,7 @@
 #pragma once
 #include "Constants.h"
 #include "Vec2.h"
+#include <cstring>
 
 class Fluid {
 public:
@@ -15,6 +16,7 @@ public:
 	void project();
 	void addQuantity(int x, int y, float density);
 
+	float totalD = 0;
 	//MAC Staggered grid
 	float* density0;
 	float* density;

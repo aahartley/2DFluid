@@ -21,8 +21,8 @@ void FluidSim::input() {
 	window->processInput(window->getPointer());
 	if (clickD) {
 		//add 
-		fluid->addQuantity(200, 200, 1000);
-
+		std::cout << mx << ' ' << my << '\n';
+		fluid->addQuantity(mx, my, 1000);
 		clickD = false;
 	}
 	if (clickV) {
@@ -49,6 +49,19 @@ void FluidSim::render(int n) {
 		}
 		glEnd();*/
 
+		//draw walls
+		glColor4f(1, 0, 0, 1);
+		glBegin(GL_POINTS);
+		for (int y = 0; y < 512; y++) {
+			for (int x = 0;x <512; x++) {
+				if (x <= 2 || y <= 2|| x >= N - 3 || y >= N - 3) {
+					//glVertex2f(x, y);
+
+				}
+			}
+		}
+		glEnd();
+
 		glColor4f(1, 1, 1, 1);
 		//glBegin(GL_QUADS);
 		//for (int x = 0; x < N; x++) {
@@ -64,10 +77,10 @@ void FluidSim::render(int n) {
 		//}
 		//glEnd();
 		glBegin(GL_POINTS);
-		for (int x = 1; x < N - 1; x++) {
-			for (int y = 1; y < N - 1; y++) {
+		for (int y = 3; y < N - 3; y++) {
+			for (int x = 3; x < N - 3; x++) {
 				float d = fluid->density[index(x, y)];
-				if (d > 1001) {
+				if (d >= 1000.1f ) {
 					glVertex2f(x, y);
 
 				}
@@ -78,7 +91,7 @@ void FluidSim::render(int n) {
 	
 }
 void FluidSim::run() {
-	fluid->addQuantity(255, 255, 1000);
+	//fluid->addQuantity(255, 255, 1000);
 	int n = 1;
 	while (!glfwWindowShouldClose(window->getPointer())) {
 		input();
